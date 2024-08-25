@@ -19,12 +19,13 @@ public class SecurityConfig {
     private final JwtConverter jwtConverter;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests((authz) ->
-                authz.requestMatchers(HttpMethod.GET, "/api/hello").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/admin/**").hasRole(ADMIN)
-                .requestMatchers(HttpMethod.GET, "/api/user/**").hasRole(USER).requestMatchers(HttpMethod.GET,
-                                "/api/admin-and-user/**").hasAnyRole(ADMIN,USER)
-                .anyRequest().authenticated());
+        http.csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests((authz) ->
+                    authz.requestMatchers("/api/auth/**").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/admin/**").hasRole(ADMIN)
+                    .requestMatchers(HttpMethod.GET, "/api/user/**").hasRole(USER).requestMatchers(HttpMethod.GET,
+                                    "/api/admin-and-user/**").hasAnyRole(ADMIN,USER)
+                    .anyRequest().authenticated());
 
         http.sessionManagement(sess -> sess.sessionCreationPolicy(
                 SessionCreationPolicy.STATELESS));
